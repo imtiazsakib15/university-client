@@ -1,15 +1,44 @@
-import { Layout } from "antd";
+import { Button, Layout } from "antd";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import { useAppDispatch } from "../../redux/hooks";
+import { removeUser } from "../../redux/features/auth/authSlice";
+import { toast } from "sonner";
 
 const { Header, Content, Footer } = Layout;
 
 const MainLayout = () => {
+  const dispatch = useAppDispatch();
+
+  const handleLogout = () => {
+    dispatch(removeUser());
+    toast.success("Logout successful!");
+  };
+
   return (
     <Layout style={{ height: "100vh" }}>
       <Sidebar />
       <Layout>
-        <Header style={{ padding: 0 }} />
+        <Header
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Button
+            type="primary"
+            style={{
+              backgroundColor: "red",
+              color: "white",
+              marginLeft: "auto",
+            }}
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
+        </Header>
         <Content style={{ margin: "24px 16px 0" }}>
           <div
             style={{
