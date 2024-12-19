@@ -9,3 +9,8 @@ export type TUser = {
   iat: number;
   exp: number;
 };
+
+export type TUserInfo = {
+  id: string;
+  password: string;
+};

@@ -6,12 +6,7 @@ import { setUser } from "../redux/features/auth/authSlice";
 import { verifyToken } from "../utils/verifyToken";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { TUser } from "../types";
-
-type TUserInfo = {
-  id: string;
-  password: string;
-};
+import { TUser, TUserInfo } from "../types";
 
 const Login = () => {
   const { register, handleSubmit } = useForm<TUserInfo>();
