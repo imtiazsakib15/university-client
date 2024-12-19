@@ -1,6 +1,13 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  BaseQueryApi,
+  BaseQueryFn,
+  createApi,
+  DefinitionType,
+  FetchArgs,
+  fetchBaseQuery,
+} from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
-import { setUser } from "../features/auth/authSlice";
+import { logout, setUser } from "../features/auth/authSlice";
 import { verifyToken } from "../../utils/verifyToken";
 import { TUser } from "../../types";
 
@@ -16,7 +23,11 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-const baseQueryWithReauth = async (args, api, extraOptions) => {
+const baseQueryWithReauth: BaseQueryFn<
+  FetchArgs,
+  BaseQueryApi,
+  DefinitionType
+> = async (args, api, extraOptions): Promise<any> => {
   let result = await baseQuery(args, api, extraOptions);
 
   if (result?.error?.status === 401) {
@@ -25,11 +36,15 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
       credentials: "include",
     });
     const data = await res.json();
-    console.log(data?.data?.accessToken);
-    const user = verifyToken(data?.data.accessToken) as TUser;
-    api.dispatch(setUser({ user, token: data?.data.accessToken }));
 
-    result = await baseQuery(args, api, extraOptions);
+    if (data?.data?.accessToken) {
+      const user = verifyToken(data.data.accessToken) as TUser;
+      api.dispatch(setUser({ user, token: data.data.accessToken }));
+
+      result = await baseQuery(args, api, extraOptions);
+    } else {
+      api.dispatch(logout());
+    }
   }
 
   return result;
